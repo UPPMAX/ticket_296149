@@ -98,6 +98,293 @@ It may indeed be a folder owner issue. Let's check my own Dardel folders.
 
 
 
+```bash
+[richel@rackham2 richel]$ git clone https://github.com/UPPMAX/ticket_296149.git
+[...]
+[richel@rackham2 richel]$ ll
+[...]
+drwxrwxr-x 3 richel richel   4096 Jul 29 13:53 ticket_296149
+```
+
+
+```
+[richel@rackham2 richel]$ module load darsync
+[richel@rackham2 richel]$ darsync
+
+
+  ____    _    ____  ______   ___   _  ____ 
+ |  _ \  / \  |  _ \/ ___\ \ / / \ | |/ ___|
+ | | | |/ _ \ | |_) \___ \\ V /|  \| | |    
+ | |_| / ___ \|  _ < ___) || | | |\  | |___ 
+ |____/_/   \_\_| \_\____/ |_| |_| \_|\____|
+
+Welcome to the Dardel data transfer tool.
+
+Please run `darsync -h` to see details on how to run the script 
+using command line options instead of interactive questions.
+
+    
+This tool can do two things;
+    1) analyze a folder and make suggestions what could be 
+       done before transferring the data.
+    2) generate a SLURM script that you can submit to the 
+       queue that will run the data transfer.
+
+We recommend that you run the `check` part first and fix any problems it finds, 
+e.g. compressing files and/or removing files. Once that is done you can run 
+this script again and choose `gen` to create a SLURM script that you submit 
+to the queue system to do the actual data transfer.
+    
+You now have to choose which of these two things you want to do. 
+Type `check` (without the quotes) to start the analysis mode, 
+or type `gen` (without the quotes) to generate the SLURM script.
+    
+check/gen? : gen
+
+
+   ____ _____ _   _
+  / ___| ____| \ | |
+ | |  _|  _| |  \| |
+ | |_| | |___| |\  |
+  \____|_____|_| \_|
+
+The gen module of this script will collect the information needed
+and generate a script that can be submitted to SLURM to preform the
+data transfer.
+
+It will require you to know 
+
+    1) Which directory on UPPMAX you want to transfer (local directory).
+    2) Which UPPMAX project id the SLURM job should be run under. 
+        ex. naiss2099-23-999
+    3) Which cluster the SLURM job should be run on.
+        ex. rackham, snowy
+    4) Which username you have at Dardel.
+    5) Where on Dardel it should transfer your data to. 
+        ex. /cfs/klemming/projects/snic/naiss2099-23-999/from_uppmax
+    6) Which SSH key should be used when connecting to Dardel.
+        ex. /home/user/id_ed25519_pdc
+    7) Where you want to save the generated SLURM script. 
+
+
+
+Specify which directory you want to copy. 
+Make sure to use tab completion (press the tab key to complete directory names) 
+to avoid spelling errors.
+Ex.
+/proj/naiss2099-22-999/
+or
+/proj/naiss2099-22-999/raw_data_only
+
+Specify local directory: /home/richel/ticket_296149/
+
+
+Specify which project id should be used to run the data transfer job in SLURM.
+Ex.
+naiss2099-23-999
+
+Specify project id: staff
+
+
+Specify which cluster the SLURM job should be run on.
+Choose between rackham and snowy.
+Default is rackham
+
+Specify cluster: 
+
+
+Specify the username that should be used to login at Dardel. 
+It is the username you have created at PDC and it is 
+probably not the same as your UPPMAX username.
+
+Specify Dardel username: richelbi
+
+
+Specify the directory on Dardel you want to transfer your data to.
+Ex.
+/cfs/klemming/projects/snic/naiss2099-23-999
+
+Specify Dardel path: /cfs/klemming/home/r/richelbi
+
+
+Specify which SSH key should be used to login to Dardel. 
+Create one by running `dardel_ssh-keygen` if you have not done so yet. 
+If no path is given it will use the default key created by `dardel_ssh-keygen`, 
+~/id_ed25519_pdc
+                    
+Specify SSH key: 
+
+
+Specify where the SLURM script file should be saved. 
+If not given it will save it here: ~/darsync_ticket_296149.slurm
+                    
+Specify SLURM script path: 
+
+
+  ____   ___  _   _ _____ 
+ |  _ \ / _ \| \ | | ____|
+ | | | | | | |  \| |  _|  
+ | |_| | |_| | |\  | |___ 
+ |____/ \___/|_| \_|_____|
+
+
+Created SLURM script: /home/richel/darsync_ticket_296149.slurm
+
+containing the following command:
+
+rsync -e "ssh -i /home/richel/id_ed25519_pdc -o StrictHostKeyChecking=no" -acPuv /home/richel/ticket_296149/ richelbi@dardel.pdc.kth.se:/cfs/klemming/home/r/richelbi
+
+
+To test if the generated file works, run
+
+bash /home/richel/darsync_ticket_296149.slurm
+
+If the transfer starts you know the script is working, and you can terminate 
+it by pressing ctrl+c and submit the script as a SLURM job.
+
+Run this command to submit it as a job:
+
+sbatch /home/richel/darsync_ticket_296149.slurm
+
+
+[richel@rackham2 richel]$ sbatch /home/richel/darsync_ticket_296149.slurm
+Submitted batch job 48991988 on cluster rackham
+[richel@rackham2 richel]$ 
+[richel@rackham2 richel]$ squeue -u $USER
+             JOBID PARTITION     NAME     USER ST       TIME  NODES NODELIST(REASON)
+          48991988      core darsync_   richel PD       0:00      1 (None)
+[richel@rackham2 richel]$ squeue -u $USER
+             JOBID PARTITION     NAME     USER ST       TIME  NODES NODELIST(REASON)
+          48991988      core darsync_   richel PD       0:00      1 (None)
+[richel@rackham2 richel]$ squeue -u $USER
+             JOBID PARTITION     NAME     USER ST       TIME  NODES NODELIST(REASON)
+          48991988      core darsync_   richel PD       0:00      1 (None)
+[richel@rackham2 richel]$ squeue -u $USER
+             JOBID PARTITION     NAME     USER ST       TIME  NODES NODELIST(REASON)
+          48991988      core darsync_   richel PD       0:00      1 (None)
+[richel@rackham2 richel]$ scancel 48991988
+[richel@rackham2 richel]$ bash /home/richel/darsync_ticket_296149.slurm
+sending incremental file list
+./
+.gitignore
+            671 100%    0.00kB/s    0:00:00 (xfr#1, to-chk=70/72)
+LICENSE
+         35,149 100%   33.52MB/s    0:00:00 (xfr#2, to-chk=69/72)
+README.md
+          6,719 100%    6.41MB/s    0:00:00 (xfr#3, to-chk=68/72)
+screenshot.png
+        598,146 100%  190.15MB/s    0:00:00 (xfr#4, to-chk=67/72)
+.git/
+.git/HEAD
+             21 100%    0.41kB/s    0:00:00 (xfr#5, to-chk=65/72)
+.git/config
+            264 100%    5.16kB/s    0:00:00 (xfr#6, to-chk=64/72)
+.git/description
+             73 100%    1.43kB/s    0:00:00 (xfr#7, to-chk=63/72)
+.git/index
+            336 100%    6.43kB/s    0:00:00 (xfr#8, to-chk=62/72)
+.git/packed-refs
+            105 100%    2.01kB/s    0:00:00 (xfr#9, to-chk=61/72)
+.git/branches/
+.git/hooks/
+.git/hooks/applypatch-msg.sample
+            452 100%    8.66kB/s    0:00:00 (xfr#10, to-chk=54/72)
+.git/hooks/commit-msg.sample
+            896 100%   16.83kB/s    0:00:00 (xfr#11, to-chk=53/72)
+.git/hooks/post-update.sample
+            189 100%    3.55kB/s    0:00:00 (xfr#12, to-chk=52/72)
+.git/hooks/pre-applypatch.sample
+            398 100%    7.47kB/s    0:00:00 (xfr#13, to-chk=51/72)
+.git/hooks/pre-commit.sample
+          1,704 100%   31.40kB/s    0:00:00 (xfr#14, to-chk=50/72)
+.git/hooks/pre-push.sample
+          1,348 100%   24.84kB/s    0:00:00 (xfr#15, to-chk=49/72)
+.git/hooks/pre-rebase.sample
+          4,951 100%   91.23kB/s    0:00:00 (xfr#16, to-chk=48/72)
+.git/hooks/prepare-commit-msg.sample
+          1,239 100%   22.41kB/s    0:00:00 (xfr#17, to-chk=47/72)
+.git/hooks/update.sample
+          3,611 100%   65.30kB/s    0:00:00 (xfr#18, to-chk=46/72)
+.git/info/
+.git/info/exclude
+            240 100%    4.34kB/s    0:00:00 (xfr#19, to-chk=45/72)
+.git/logs/
+.git/logs/HEAD
+            201 100%    3.63kB/s    0:00:00 (xfr#20, to-chk=44/72)
+.git/logs/refs/
+.git/logs/refs/heads/
+.git/logs/refs/heads/main
+            201 100%    3.57kB/s    0:00:00 (xfr#21, to-chk=40/72)
+.git/logs/refs/remotes/
+.git/logs/refs/remotes/origin/
+.git/logs/refs/remotes/origin/HEAD
+            201 100%    3.57kB/s    0:00:00 (xfr#22, to-chk=38/72)
+.git/objects/
+.git/objects/01/
+.git/objects/01/da96bf5c66a022c7faadea66eb2ba42ccaba85
+            163 100%    2.89kB/s    0:00:00 (xfr#23, to-chk=20/72)
+.git/objects/24/
+.git/objects/24/fce1d1fe631e2e29cdb95f9fb07454a5e2f238
+             37 100%    0.66kB/s    0:00:00 (xfr#24, to-chk=19/72)
+.git/objects/26/
+.git/objects/26/730f93ebdeb3c926b02416d6a1e5b846a8be49
+          3,118 100%   54.37kB/s    0:00:00 (xfr#25, to-chk=18/72)
+.git/objects/28/
+.git/objects/28/b88c99dbf837580dc6143b3a3bbbc78d149d14
+          2,964 100%   51.69kB/s    0:00:00 (xfr#26, to-chk=17/72)
+.git/objects/2c/
+.git/objects/2c/3e92019f55994ab0f2f16e9ad1119b4d77b477
+            171 100%    2.98kB/s    0:00:00 (xfr#27, to-chk=16/72)
+.git/objects/34/
+.git/objects/34/6b431202d8a4a7d6a7e99a29727ba08db88327
+            120 100%    2.09kB/s    0:00:00 (xfr#28, to-chk=15/72)
+.git/objects/77/
+.git/objects/77/3e7eb6090a6b2b06541d0cfae1322b01adcc08
+            160 100%    2.79kB/s    0:00:00 (xfr#29, to-chk=14/72)
+.git/objects/8c/
+.git/objects/8c/8d9a7901025005767431876a9a14cffebe8e13
+            158 100%    2.76kB/s    0:00:00 (xfr#30, to-chk=13/72)
+.git/objects/a7/
+.git/objects/a7/eebba8f287a4fd4c1ae75a1857fc93ebd040d1
+        587,577 100%    9.50MB/s    0:00:00 (xfr#31, to-chk=12/72)
+.git/objects/bb/
+.git/objects/bb/284ab08beeb89e1214fd9794781d3b1929adb5
+            120 100%    1.99kB/s    0:00:00 (xfr#32, to-chk=11/72)
+.git/objects/c1/
+.git/objects/c1/215bd77c85b6298e552dcb1c0f7f2c396bad88
+            793 100%   13.13kB/s    0:00:00 (xfr#33, to-chk=10/72)
+.git/objects/e4/
+.git/objects/e4/01865facc4ae7de444b57e2679ab7f705180f2
+          1,628 100%   26.95kB/s    0:00:00 (xfr#34, to-chk=9/72)
+.git/objects/e7/
+.git/objects/e7/5435c1b1aa229e6b2e849b5da20696779bf734
+            406 100%    6.61kB/s    0:00:00 (xfr#35, to-chk=8/72)
+.git/objects/f0/
+.git/objects/f0/a3899b5467f567817e054cc5de858f5301151e
+            158 100%    2.57kB/s    0:00:00 (xfr#36, to-chk=7/72)
+.git/objects/f2/
+.git/objects/f2/88702d2fa16d3cdf0035b15a9fcbc552cd88e7
+         14,219 100%  231.43kB/s    0:00:00 (xfr#37, to-chk=6/72)
+.git/objects/info/
+.git/objects/pack/
+.git/refs/
+.git/refs/heads/
+.git/refs/heads/main
+             41 100%    0.67kB/s    0:00:00 (xfr#38, to-chk=2/72)
+.git/refs/remotes/
+.git/refs/remotes/origin/
+.git/refs/remotes/origin/HEAD
+             30 100%    0.48kB/s    0:00:00 (xfr#39, to-chk=0/72)
+.git/refs/tags/
+
+sent 1,273,886 bytes  received 908 bytes  283,287.56 bytes/sec
+total size is 1,268,978  speedup is 1.00
+[richel@rackham2 richel]$ bash /home/richel/darsync_ticket_296149.slurm
+sending incremental file list
+
+sent 2,828 bytes  received 44 bytes  638.22 bytes/sec
+total size is 1,268,978  speedup is 441.84
+```
 
 
 
