@@ -386,6 +386,18 @@ sent 2,828 bytes  received 44 bytes  638.22 bytes/sec
 total size is 1,268,978  speedup is 441.84
 ```
 
+Results in:
+
+```
+richelbi@login1:~> ll
+total 640
+-rw-rw-r--  1 richelbi richelbi  35149 Jul 29 13:53 LICENSE
+drwx------+ 2 richelbi richelbi   4096 Feb  6 09:30 Private
+drwxr-xr-x+ 2 richelbi richelbi   4096 Feb  6 09:30 Public
+-rw-rw-r--  1 richelbi richelbi   6719 Jul 29 13:53 README.md
+-rw-rw-r--  1 richelbi richelbi 598146 Jul 29 13:53 screenshot.png
+```
+
 
 
 ## Iteration 1
