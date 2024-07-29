@@ -1,6 +1,36 @@
 # ticket_296149
 
+## Problem
+
+When running the darsycn script (directly, without sbatch) is
+'rsync: [generator] failed to set times on 
+"/cfs/klemming/projects/snic/naiss2024-23-352/.": Operation not permitted (1)' 
+(see screenshot), after which I asked the user to kill the script 
+
+The folders on Dardel did not show different dates when using `ll`.
+
 ## Solution
+
+The error message was only a warning: just run the script again.
+
+The folders do not change dates indeed (as these were created earlier),
+but their content is updated as expected.
+
+## Details
+
+The darsync script was run on the login node.
+The login node was used, because there was no time to get
+a compute allocation via official procedures, 
+as it is holidays for most colleague.
+
+It was checked if the login node was overburdened,
+it was seen that the user `emmajo` (at the fourth
+process) only used 0.7% of CPU capacity of the login node,
+hence it would not disturb other users too much
+
+![rsync only used 0.7% of login node CPU capacity](screenshot_rackham2.png)
+
+## Iteration 2
 
 ### Approach 1: cautious
 
@@ -35,7 +65,7 @@ After meeting with the user, the following was discoved/confirmed:
   "/cfs/klemming/projects/snic/naiss2024-23-352/.": Operation not permitted (1)' 
   (see screenshot), after which I asked the user to kill the script 
 
-![](screenshot.png)
+![](screenshot_user.png)
 
 Hypothesis, as shared in email to user:
 
