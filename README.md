@@ -2,10 +2,93 @@
 
 ## Solution
 
-Suggest to create a Rackham Small project and do the transfer with its
-computational resources
+- Run the darsync script on the login node, see if it works
+- Delete the backup folders on Dardel, then sync again
 
 ## Problem
+
+After meeting with the user, the following was discoved/confirmed:
+
+- SSH keys are created correctly using `darsync sshkey` and then uploadad 
+  correctly to the PDC portal with the added `*.uppmax.uu.se`
+- User can create a folder on the Dardel project `naiss2024-23-352`
+  (see screenshot)
+- Error when running the darsycn script (directly, without sbatch) is
+  'rsync: [generator] failed to set times on 
+  "/cfs/klemming/projects/snic/naiss2024-23-352/.": Operation not permitted (1)' 
+  (see screenshot), after which I asked the user to kill the script 
+
+![](screenshot.png)
+
+Hypothesis, as shared in email to user:
+
+```bash
+[...]
+
+I think now:
+
+It was working perfectly fine!
+
+The error given was caused by the folders on Dardel *already being present*, which is correct, as you've run (and stopped) the script before!
+
+To solve your problem, I suggest to:
+
+Run that script again and wait. If you want to check if something happens on Dardel, *go into the folders* and see if anything changes there.
+
+Let me know if you can try it and its results: maybe we don't need a meeting at 14:00 :-) . If you did not have time, sure, see you at 14:00 at https://uu-se.zoom.us/s/7093465705 with passcode 42 (I will do a bit more research to see if my theory holds up) :-)
+
+[...]
+```
+
+My hypothesis is backed up by [this Stack Overflow](https://stackoverflow.com/a/54861420)
+post, where the solution was suggested to delete the folders to `rsync` to.
+I will add this option to the list of possible solutions.
+
+
+- [IRRELEVANT] [Stack Overflow](https://stackoverflow.com/questions/65843766/what-does-rsync-failed-to-set-times-on-really-means) 
+  seems irrelevant, as it describes the error and then crashes
+- [Stack Overflow](https://stackoverflow.com/questions/667992/rsync-error-failed-to-set-times-on-foo-bar-operation-not-permitted)
+  - [This answer](https://stackoverflow.com/a/8757684) seems relevant: maybe the user does not own the folder to send the data
+    too. Judging from the screenshot, I see some folders:
+
+```text
+-rw-r-x--- 1 enjoha2 pg_naiss2024-23-352 270760 Jul  6 darsync_Microcystis.ownership.gz
+drwxrwsr-x 6 enjoha2 pg_naiss2024-23-352   4096 Apr 12 Lokesh_blast <-- IRRELEVANT FOLDER
+drwxrwsr-x 6 enjoha2 pg_naiss2024-23-352   4096 Apr 12 Microcystis_IlluminaSequences <-- IRRELEVANT FOLDER
+drwxrwS--- 2 enjoha2 pg_naiss2024-23-352   4096 Jul  6 Microcystis_Pacbio
+drwxrwS--- 2 enjoha2 pg_naiss2024-23-352   4096 Jul  6 qPCR
+drwxrwS--- 2 enjoha2 pg_naiss2024-23-352   4096 Jul  6 Reference_sequences
+drwxr-sr-x 6 enjoha2 pg_naiss2024-23-352   4096 Jun 14 test [1]
+^^^^^^^^^^
+||||||||||
+|||||||+++--- Public
+|||||||
+||||+++------ Group
+||||
+|+++--------- Owner
+|
++------------ This is a directory
+
+- `s`: `setuid` bit, [source](https://unix.stackexchange.com/a/118855)
+- `S`: [source](https://unix.stackexchange.com/a/27254)
+- [1] User can create folder
+
+
+```
+
+
+
+
+
+
+
+## Iteration 1
+
+### Solution 1
+
+Suggest to create a Rackham Small project and do the transfer with its computational resources
+
+### Problem 1
 
 > I did write previously about problems when trying to transfer files from rackham to dardel (NAISS support #294917). 
 > I got a link (https://docs.uppmax.uu.se/cluster_guides/dardel_migration/) and have followed the info there. 
