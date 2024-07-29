@@ -2,8 +2,25 @@
 
 ## Solution
 
-- Run the darsync script on the login node, see if it works
-- Delete the backup folders on Dardel, then sync again
+### Approach 1: cautious
+
+Run the darsync script on the login node, 
+see if the contents in the folders is changed
+
+### Approach 2: ruthless
+
+Delete the backup folders on Dardel, then sync again
+
+On Dardel, do:
+
+```bash
+rm -rf Microcystis_Pacbio
+rm -rf qPCR
+rm -rf Reference_sequences
+```
+
+Then run the darsync script on the login node to see if the folders
+are created again.
 
 ## Problem
 
@@ -76,6 +93,8 @@ drwxr-sr-x 6 enjoha2 pg_naiss2024-23-352   4096 Jun 14 test [1]
 
 ```
 
+It may indeed be a folder owner issue. Let's check my own Dardel folders.
+ * [ ] Check my Dardel file permissions
 
 
 
